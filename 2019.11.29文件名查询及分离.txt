@@ -1,0 +1,14 @@
+import os
+root__path = os.getcwd()
+offset = len(root__path.split("\\"))
+#print(root__path)
+for root,dirs,files in os.walk(root__path):
+	current_dir = root
+	path_list = current_dir.split("\\")
+	indent_level = len(path_list)-offset
+	print('\t'*indent_level,"\\"+path_list[-1])
+	# print(root)
+	for f in files:
+		file_name = os.path.splitext(f)[0]#分离文件名和扩展名
+		print("\t"*(indent_level+1),file_name)
+	# os.path.splitext()
