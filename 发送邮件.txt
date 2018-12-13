@@ -1,0 +1,44 @@
+import smtplib#构造一个人包发送邮件
+from email.mime.text import MIMEText#纯文本文件，构建邮件的内容
+from email.header import Header   #收件人 发件人的主题信息
+from email.mime.multipart import MIMEMultipart#导入一个可以发送附件的包，每个附件都是一个MIMEMultipart
+from email.mime.base import MIMEBase#每一个MIMEBase都对应一个附件    把所有的附件进行序列化使用
+from email import encoders
+
+def add_attachment(file):
+	with open(file,'r') as fp:
+		mime = MIMEBase('application','octect-string',filename = "test.txt")#指定对象是什么类型， 以什么形式发送octect-string
+		mime.add_header("Content - Disposition",'attachment',filename = "test.txt")#添加附件的头
+		mime.add_header("Content - ID","<0>")
+		mime.add_header("X - attachment-Id","0")#告诉浏览器 用设么指定的程序打开
+		mime.set_payload(fp.read())#把附件的内容写进
+		encoders.encode_base64(mime)
+		att_msg.attach(mime)
+from_addr = "1747220367@qq.com"				#发送人
+to_addr = "1747220367@qq.com"				#收件ren 
+smtp_server = 'smtp.qq.com'
+psw = 'aiwnmrzacszwchdi'
+#创建邮件的正文对象
+
+# with open("test.txt",'r',encoding = 'utf-8') as fp: #发送以test.html命名的文件
+# 		contents =fp.read()
+contents = "你好"	#发送邮件内容   #以 utf-8发送，格式为plain ，文件名为contents
+msg = MIMEText(contents,'plain','utf-8')	#邮件格式   utf-8对有邮件编辑
+
+#创建带附件的邮件对象
+att_msg = MIMEMultipart()
+att_msg['From'] = from_addr
+att_msg['To'] = to_addr
+
+att_msg['Subject'] = "Test"
+att_msg.attach(msg)     #将正文添加到带附件的邮件对象
+#批量添加附件
+att = ["test.txt"]
+for a in att:
+	add_attachment(a)
+
+#创建连接服务器的语句
+server = smtplib.SMTP(smtp_server,25)
+server.login(from_addr,psw)
+server.sendmail(from_addr,to_addr,att_msg.as_string()) #讲msg转化问二进制代码 即string[to_addr]
+server.quit()
